@@ -8,10 +8,7 @@ description = "Build a single executable file of your Python program."
 readme = { file = "README.md", content-type = "text/markdown" }
 authors = [{ name = "Juliano Fernandes", email = "julianofernandes@gmail.com" }]
 keywords = ["python", "packaging", "tools"]
-classifiers = [
-  "Programming Language :: Python :: 3 :: Only",
-  "License :: OSI Approved :: MIT License",
-]
+classifiers = ["Programming Language :: Python :: 3 :: Only"]
 requires-python = ">=3.9"
 dynamic = ["version"]
 dependencies = []
