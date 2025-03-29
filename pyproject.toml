@@ -4,7 +4,6 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pkging"
-version = "0.1.0"
 description = "Build a single executable file of your Python program."
 readme = { file = "README.md", content-type = "text/markdown" }
 authors = [{ name = "Juliano Fernandes", email = "julianofernandes@gmail.com" }]
@@ -14,10 +13,17 @@ classifiers = [
   "License :: OSI Approved :: MIT License",
 ]
 requires-python = ">=3.9"
+dynamic = ["version"]
 dependencies = []
+
+[project.scripts]
+pkging = "pkging.main:main"
 
 [project.urls]
 Repository = "https://github.com/julianolf/pkging"
+
+[tool.setuptools.dynamic]
+version = { attr = "pkging.__version__" }
 
 [tool.ruff]
 line-length = 100
@@ -26,4 +32,7 @@ line-length = 100
 select = ["B", "E", "F", "I", "W", "C4", "UP", "ARG", "SIM"]
 
 [tool.coverage.run]
-omit = ["test_*"]
+omit = ["tests/*"]
+
+[tool.coverage.report]
+exclude_also = ["def main"]
