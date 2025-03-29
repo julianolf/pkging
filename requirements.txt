@@ -1,0 +1,5 @@
+build
+coverage[toml]
+ruff
+setuptools
+twine
