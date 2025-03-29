@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pkging"
+version = "0.1.0"
+description = "Build a single executable file of your Python program."
+readme = { file = "README.md", content-type = "text/markdown" }
+authors = [{ name = "Juliano Fernandes", email = "julianofernandes@gmail.com" }]
+keywords = ["python", "packaging", "tools"]
+classifiers = [
+  "Programming Language :: Python :: 3 :: Only",
+  "License :: OSI Approved :: MIT License",
+]
+requires-python = ">=3.9"
+dependencies = []
+
+[project.urls]
+Repository = "https://github.com/julianolf/pkging"
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["B", "E", "F", "I", "W", "C4", "UP", "ARG", "SIM"]
+
+[tool.coverage.run]
+omit = ["test_*"]
