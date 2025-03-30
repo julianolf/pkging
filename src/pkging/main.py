@@ -1,6 +1,7 @@
 import argparse
 import dataclasses
 import pathlib
+import shutil
 import subprocess
 import sys
 import typing
@@ -101,6 +102,14 @@ def pip(source: pathlib.Path, target: pathlib.Path) -> str:
     dst = str(target)
     cmd = ["pip", "install", "--disable-pip-version-check", "--no-compile", "--target", dst, src]
     return run(*cmd)
+
+
+def clean(path: pathlib.Path) -> None:
+    dirs = ["bin"]
+
+    for dir in (path / d for d in dirs):
+        if dir.exists():
+            shutil.rmtree(dir)
 
 
 def parse_args() -> Args:

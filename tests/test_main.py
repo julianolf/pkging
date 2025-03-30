@@ -118,3 +118,16 @@ class TestPip(unittest.TestCase):
             str(main.CURRENT_DIR),
         )
         self.assertEqual(run.call_args, expected)
+
+
+class TestClean(unittest.TestCase):
+    def test_clean(self):
+        with tempfile.TemporaryDirectory() as path:
+            temp = pathlib.Path(path).resolve()
+
+            bin = temp / "bin"
+            bin.mkdir()
+            self.assertTrue(bin.exists())
+
+            main.clean(temp)
+            self.assertFalse(bin.exists())
