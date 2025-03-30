@@ -151,3 +151,15 @@ class TestPack(unittest.TestCase):
 
             expected = target / name
             self.assertTrue(expected.exists())
+
+
+class TestBuild(unittest.TestCase):
+    @mock.patch.object(main, "pack")
+    @mock.patch.object(main, "clean")
+    @mock.patch.object(main, "pip")
+    def test_build(self, pip, clean, pack):
+        args = main.Args(main.CURRENT_DIR, main.BUILD_DIR)
+        main.build(args)
+        self.assertTrue(pip.called)
+        self.assertTrue(clean.called)
+        self.assertTrue(pack.called)

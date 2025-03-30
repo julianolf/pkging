@@ -4,6 +4,7 @@ import pathlib
 import shutil
 import subprocess
 import sys
+import tempfile
 import typing
 import zipapp
 
@@ -123,6 +124,14 @@ def pack(
     target.mkdir(parents=True, exist_ok=True)
     target = target / name
     zipapp.create_archive(source, target, interpreter=interpreter, main=main)
+
+
+def build(args: Args) -> None:
+    with tempfile.TemporaryDirectory() as path:
+        temp = pathlib.Path(path).resolve()
+        pip(args.source, temp)
+        clean(temp)
+        pack(temp, args.target, args.output, args.interpreter, args.main)
 
 
 def parse_args() -> Args:
