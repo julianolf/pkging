@@ -96,6 +96,13 @@ def run(*cmd: str) -> str:
     return result.stdout.decode()
 
 
+def pip(source: pathlib.Path, target: pathlib.Path) -> str:
+    src = str(source)
+    dst = str(target)
+    cmd = ["pip", "install", "--disable-pip-version-check", "--no-compile", "--target", dst, src]
+    return run(*cmd)
+
+
 def parse_args() -> Args:
     parser = argparse.ArgumentParser(
         prog=__appname__,

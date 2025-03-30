@@ -10,7 +10,7 @@ from pkging import __appname__, __version__, main
 
 class TestParseArgs(unittest.TestCase):
     @mock.patch.object(sys, "argv", ["pkging"])
-    def test_parse_args(self) -> None:
+    def test_parse_args(self):
         args = main.parse_args()
         self.assertIsInstance(args, main.Args)
         self.assertEqual(args.source, main.CURRENT_DIR)
@@ -20,7 +20,7 @@ class TestParseArgs(unittest.TestCase):
         self.assertIsNone(args.main)
 
     @mock.patch.multiple(sys, argv=["pkging", "--version"], stdout=io.StringIO())
-    def test_parse_args_show_version_and_exit(self) -> None:
+    def test_parse_args_show_version_and_exit(self):
         with self.assertRaises(SystemExit):
             main.parse_args()
 
@@ -102,3 +102,19 @@ class TestRun(unittest.TestCase):
         command = ("python", "-c", "print 'test'")
         with self.assertRaises(SystemExit):
             main.run(*command)
+
+
+class TestPip(unittest.TestCase):
+    @mock.patch.object(main, "run")
+    def test_pip(self, run):
+        main.pip(main.CURRENT_DIR, main.BUILD_DIR)
+        expected = mock.call(
+            "pip",
+            "install",
+            "--disable-pip-version-check",
+            "--no-compile",
+            "--target",
+            str(main.BUILD_DIR),
+            str(main.CURRENT_DIR),
+        )
+        self.assertEqual(run.call_args, expected)
