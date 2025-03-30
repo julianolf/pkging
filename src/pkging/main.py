@@ -66,6 +66,24 @@ def get_script(pyproject: PyProject) -> typing.Optional[Script]:
         return Script(key, value)
 
 
+def update_from_pyproject(args: Args) -> None:
+    pyproject = load_pyproject(args.source)
+
+    if pyproject is None:
+        return None
+
+    script = get_script(pyproject)
+
+    if script is None:
+        return None
+
+    if args.output == DEFAULT_OUTPUT:
+        args.output = script.name
+
+    if args.main is None:
+        args.main = script.value
+
+
 def parse_args() -> Args:
     parser = argparse.ArgumentParser(
         prog=__appname__,
