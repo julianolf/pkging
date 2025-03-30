@@ -16,7 +16,7 @@ except ImportError:
 
 class TestParseArgs(unittest.TestCase):
     @mock.patch.object(sys, "argv", ["pkging"])
-    def test_parse_args(self):
+    def test_parser(self):
         args = main.parse_args()
         self.assertIsInstance(args, main.Args)
         self.assertEqual(args.source, main.CURRENT_DIR)
@@ -26,7 +26,7 @@ class TestParseArgs(unittest.TestCase):
         self.assertIsNone(args.main)
 
     @mock.patch.multiple(sys, argv=["pkging", "--version"], stdout=io.StringIO())
-    def test_parse_args_show_version_and_exit(self):
+    def test_parser_show_version_and_exit(self):
         with self.assertRaises(SystemExit):
             main.parse_args()
 
@@ -36,11 +36,11 @@ class TestParseArgs(unittest.TestCase):
 
 
 class TestLoadPyproject(unittest.TestCase):
-    def test_load_pyproject(self):
+    def test_returning_pyproject(self):
         pyproject = main.load_pyproject(main.CURRENT_DIR)
         self.assertIsInstance(pyproject, main.PyProject)
 
-    def test_load_pyproject_when_file_is_missing(self):
+    def test_returning_none_when_file_is_missing(self):
         with tempfile.TemporaryDirectory() as path:
             temp = pathlib.Path(path).resolve()
             pyproject = main.load_pyproject(temp)
@@ -49,18 +49,18 @@ class TestLoadPyproject(unittest.TestCase):
 
 
 class TestGetScript(unittest.TestCase):
-    def test_get_script(self):
+    def test_returning_script(self):
         pyproject = main.PyProject(scripts={"test": "pkg.mod:func"})
         script = main.get_script(pyproject)
         self.assertIsInstance(script, main.Script)
         self.assertEqual(script, main.Script("test", "pkg.mod:func"))
 
-    def test_get_script_returns_none(self):
+    def test_returning_none(self):
         pyproject = main.PyProject()
         script = main.get_script(pyproject)
         self.assertIsNone(script)
 
-    def test_get_script_raises_error(self):
+    def test_raising_error(self):
         pyproject = main.PyProject(scripts={"one": "pkg.mod:one", "two": "pkg.mod:two"})
 
         with self.assertRaises(main.PyProjectError) as error:
@@ -71,13 +71,13 @@ class TestGetScript(unittest.TestCase):
 
 
 class TestUpdateFromPyproject(unittest.TestCase):
-    def test_update_from_pyproject(self):
+    def test_updating_args(self):
         args = main.Args(main.CURRENT_DIR, main.BUILD_DIR)
         main.update_from_pyproject(args)
         self.assertNotEqual(args.output, main.DEFAULT_OUTPUT)
         self.assertIsNotNone(args.main)
 
-    def test_update_from_pyproject_when_file_is_missing(self):
+    def test_nothing_changes_when_file_is_missing(self):
         with tempfile.TemporaryDirectory() as path:
             temp = pathlib.Path(path).resolve()
             args = main.Args(temp, main.BUILD_DIR)
@@ -86,7 +86,7 @@ class TestUpdateFromPyproject(unittest.TestCase):
         self.assertEqual(args.output, main.DEFAULT_OUTPUT)
         self.assertIsNone(args.main)
 
-    def test_update_from_pyproject_without_scripts(self):
+    def test_nothing_changes_without_scripts(self):
         with tempfile.TemporaryDirectory() as path:
             temp = pathlib.Path(path).resolve()
             pyproject = temp / "pyproject.toml"
