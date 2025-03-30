@@ -90,3 +90,15 @@ class TestUpdateFromPyproject(unittest.TestCase):
 
         self.assertEqual(args.output, main.DEFAULT_OUTPUT)
         self.assertIsNone(args.main)
+
+
+class TestRun(unittest.TestCase):
+    def test_run_command(self):
+        expected = "test\n"
+        command = ("python", "-c", "print('test')")
+        self.assertEqual(main.run(*command), expected)
+
+    def test_exit_program_on_errors(self):
+        command = ("python", "-c", "print 'test'")
+        with self.assertRaises(SystemExit):
+            main.run(*command)

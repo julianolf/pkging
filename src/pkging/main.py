@@ -1,6 +1,8 @@
 import argparse
 import dataclasses
 import pathlib
+import subprocess
+import sys
 import typing
 
 from pkging import __appname__, __version__
@@ -82,6 +84,16 @@ def update_from_pyproject(args: Args) -> None:
 
     if args.main is None:
         args.main = script.value
+
+
+def run(*cmd: str) -> str:
+    result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+    if result.returncode != 0:
+        error = result.stdout.decode()
+        sys.exit(error)
+
+    return result.stdout.decode()
 
 
 def parse_args() -> Args:
