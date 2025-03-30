@@ -40,3 +40,25 @@ class TestLoadPyproject(unittest.TestCase):
             pyproject = main.load_pyproject(temp)
 
         self.assertIsNone(pyproject)
+
+
+class TestGetScript(unittest.TestCase):
+    def test_get_script(self):
+        pyproject = main.PyProject(scripts={"test": "pkg.mod:func"})
+        script = main.get_script(pyproject)
+        self.assertIsInstance(script, main.Script)
+        self.assertEqual(script, main.Script("test", "pkg.mod:func"))
+
+    def test_get_script_returns_none(self):
+        pyproject = main.PyProject()
+        script = main.get_script(pyproject)
+        self.assertIsNone(script)
+
+    def test_get_script_raises_error(self):
+        pyproject = main.PyProject(scripts={"one": "pkg.mod:one", "two": "pkg.mod:two"})
+
+        with self.assertRaises(main.PyProjectError) as error:
+            main.get_script(pyproject)
+
+        expected = "pyproject.toml has multiple entries in project.scripts section"
+        self.assertEqual(error.exception.msg, expected)

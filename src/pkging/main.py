@@ -31,6 +31,17 @@ class PyProject:
     scripts: typing.Optional[dict[str, str]] = None
 
 
+class Script(typing.NamedTuple):
+    name: str
+    value: str
+
+
+class PyProjectError(Exception):
+    def __init__(self, msg: str) -> None:
+        super().__init__()
+        self.msg = msg
+
+
 def load_pyproject(path: pathlib.Path) -> typing.Optional[PyProject]:
     pyproject = path / "pyproject.toml"
 
@@ -42,6 +53,17 @@ def load_pyproject(path: pathlib.Path) -> typing.Optional[PyProject]:
 
     project = toml.get("project", {})
     return PyProject(scripts=project.get("scripts"))
+
+
+def get_script(pyproject: PyProject) -> typing.Optional[Script]:
+    if pyproject.scripts is None:
+        return None
+
+    if len(pyproject.scripts) != 1:
+        raise PyProjectError("pyproject.toml has multiple entries in project.scripts section")
+
+    for key, value in pyproject.scripts.items():
+        return Script(key, value)
 
 
 def parse_args() -> Args:
