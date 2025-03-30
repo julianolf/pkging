@@ -40,5 +40,5 @@ coverage: test
 
 .PHONY: clean
 clean:
-	@rm -rf .ruff_cache .coverage dist
+	@rm -rf .ruff_cache .coverage dist build
 	@find . -name __pycache__ | xargs rm -rf
