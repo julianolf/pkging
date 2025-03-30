@@ -1,5 +1,6 @@
 import argparse
 import dataclasses
+import functools
 import pathlib
 import shutil
 import subprocess
@@ -182,6 +183,17 @@ def parse_args() -> Args:
         interpreter=args.interpreter,
         main=args.main,
     )
+
+
+def error_handler(func: typing.Callable[[], None]) -> typing.Callable[[], None]:
+    @functools.wraps(func)
+    def wrapper() -> None:
+        try:
+            func()
+        except (zipapp.ZipAppError, tomllib.TOMLDecodeError, PyProjectError) as error:
+            sys.exit(str(error))
+
+    return wrapper
 
 
 def main() -> None:

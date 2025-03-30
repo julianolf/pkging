@@ -3,9 +3,15 @@ import pathlib
 import sys
 import tempfile
 import unittest
+import zipapp
 from unittest import mock
 
 from pkging import __appname__, __version__, main
+
+try:
+    import tomllib  # pyright: ignore
+except ImportError:
+    import tomli as tomllib
 
 
 class TestParseArgs(unittest.TestCase):
@@ -163,3 +169,28 @@ class TestBuild(unittest.TestCase):
         self.assertTrue(pip.called)
         self.assertTrue(clean.called)
         self.assertTrue(pack.called)
+
+
+class TestErrorHandler(unittest.TestCase):
+    def test_without_errors(self):
+        @main.error_handler
+        def func():
+            pass
+
+        self.assertIsNone(func())
+
+    def test_handling_errors(self):
+        errors = [
+            zipapp.ZipAppError(),
+            tomllib.TOMLDecodeError(msg="", doc="", pos=0),
+            main.PyProjectError(""),
+        ]
+
+        for error in errors:
+            with self.subTest(error_type=type(error)):
+
+                def func(error=error):
+                    raise error
+
+                with self.assertRaises(SystemExit):
+                    main.error_handler(func)()
