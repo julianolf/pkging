@@ -5,6 +5,12 @@ import typing
 
 from pkging import __appname__, __version__
 
+try:
+    import tomllib  # pyright: ignore
+except ImportError:
+    import tomli as tomllib
+
+
 CURRENT_DIR = pathlib.Path(".").resolve()
 BUILD_DIR = CURRENT_DIR / "build"
 DEFAULT_OUTPUT = "obj"
@@ -18,6 +24,24 @@ class Args:
     output: str = DEFAULT_OUTPUT
     interpreter: str = DEFAULT_INTERPRETER
     main: typing.Optional[str] = None
+
+
+@dataclasses.dataclass
+class PyProject:
+    scripts: typing.Optional[dict[str, str]] = None
+
+
+def load_pyproject(path: pathlib.Path) -> typing.Optional[PyProject]:
+    pyproject = path / "pyproject.toml"
+
+    if not pyproject.exists():
+        return None
+
+    with pyproject.open("rb") as file:
+        toml = tomllib.load(file)
+
+    project = toml.get("project", {})
+    return PyProject(scripts=project.get("scripts"))
 
 
 def parse_args() -> Args:

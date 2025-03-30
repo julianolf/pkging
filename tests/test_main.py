@@ -1,5 +1,7 @@
 import io
+import pathlib
 import sys
+import tempfile
 import unittest
 from unittest import mock
 
@@ -25,3 +27,16 @@ class TestParseArgs(unittest.TestCase):
         expected = f"{__appname__} {__version__}"
         output = sys.stdout.getvalue().strip()  # pyright: ignore
         self.assertEqual(expected, output)
+
+
+class TestLoadPyproject(unittest.TestCase):
+    def test_load_pyproject(self):
+        pyproject = main.load_pyproject(main.CURRENT_DIR)
+        self.assertIsInstance(pyproject, main.PyProject)
+
+    def test_load_pyproject_when_file_is_missing(self):
+        with tempfile.TemporaryDirectory() as path:
+            temp = pathlib.Path(path).resolve()
+            pyproject = main.load_pyproject(temp)
+
+        self.assertIsNone(pyproject)
