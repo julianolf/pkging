@@ -5,6 +5,7 @@ import shutil
 import subprocess
 import sys
 import typing
+import zipapp
 
 from pkging import __appname__, __version__
 
@@ -110,6 +111,18 @@ def clean(path: pathlib.Path) -> None:
     for dir in (path / d for d in dirs):
         if dir.exists():
             shutil.rmtree(dir)
+
+
+def pack(
+    source: pathlib.Path,
+    target: pathlib.Path,
+    name: str,
+    interpreter: str = DEFAULT_INTERPRETER,
+    main: typing.Optional[str] = None,
+) -> None:
+    target.mkdir(parents=True, exist_ok=True)
+    target = target / name
+    zipapp.create_archive(source, target, interpreter=interpreter, main=main)
 
 
 def parse_args() -> Args:

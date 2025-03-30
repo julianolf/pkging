@@ -131,3 +131,23 @@ class TestClean(unittest.TestCase):
 
             main.clean(temp)
             self.assertFalse(bin.exists())
+
+
+class TestPack(unittest.TestCase):
+    def test_pack(self):
+        with tempfile.TemporaryDirectory() as path:
+            temp = pathlib.Path(path).resolve()
+
+            source = temp / "source"
+            source.mkdir()
+
+            entrypoint = source / "__main__.py"
+            entrypoint.touch()
+
+            target = temp / "build"
+            name = "test"
+
+            main.pack(source, target, name)
+
+            expected = target / name
+            self.assertTrue(expected.exists())
