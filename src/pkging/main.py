@@ -196,5 +196,8 @@ def error_handler(func: typing.Callable[[], None]) -> typing.Callable[[], None]:
     return wrapper
 
 
+@error_handler
 def main() -> None:
-    parse_args()
+    args = parse_args()
+    update_from_pyproject(args)
+    build(args)
