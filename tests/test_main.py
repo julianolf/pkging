@@ -182,7 +182,7 @@ class TestErrorHandler(unittest.TestCase):
     def test_handling_errors(self):
         errors = [
             zipapp.ZipAppError(),
-            tomllib.TOMLDecodeError(msg="", doc="", pos=0),
+            tomllib.TOMLDecodeError(),
             main.PyProjectError(""),
         ]
 
